@@ -1,4 +1,4 @@
-# Compact RAM Cleaner
+# ![](https://i.imgur.com/jdFSXk5.png) Compact RAM Cleaner  
 
 <details>
   <summary>:memo:English description</summary>
