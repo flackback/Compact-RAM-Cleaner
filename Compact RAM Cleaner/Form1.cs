@@ -21,11 +21,10 @@ namespace Compact_RAM_Cleaner
         #region Paint
         void Form1_Paint(object sender, PaintEventArgs e)
         {
-            Pen pen = new Pen(Color.FromArgb(48, 49, 54), 2);
-            e.Graphics.DrawLine(pen, 0, Height, Width, Height);
-            Pen pen2 = new Pen(SystemColors.ControlDark, 2);
-            e.Graphics.DrawLine(pen2, 12, LabelMon.Location.Y + 10, Width - 12, LabelMon.Location.Y + 10);
-            e.Graphics.DrawLine(pen2, 12, LabelSettings.Location.Y + 10, Width - 12, LabelSettings.Location.Y + 10);
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(48, 49, 54), 2), 0, Height, Width, Height);
+            Pen pen = new Pen(SystemColors.ControlDark, 2);
+            e.Graphics.DrawLine(pen, 12, LabelMon.Location.Y + 10, Width - 12, LabelMon.Location.Y + 10);
+            e.Graphics.DrawLine(pen, 12, LabelSettings.Location.Y + 10, Width - 12, LabelSettings.Location.Y + 10);
         }
         void ClosePanel_Paint(object sender, PaintEventArgs e)
         {
@@ -36,27 +35,16 @@ namespace Compact_RAM_Cleaner
         }
         void Minimize_Paint(object sender, PaintEventArgs e)
         {
-            Pen pen = new Pen(Color.FromArgb(160, 160, 160), 2);
-            e.Graphics.DrawLine(pen, 4, 9, Minimize.Width - 4, 9);
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(160, 160, 160), 2), 4, 9, Minimize.Width - 4, 9);
         }
         #endregion
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        extern static bool DestroyIcon(IntPtr handle);
-        [DllImport("psapi.dll")]
-        static extern int EmptyWorkingSet([In] IntPtr obj0);
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
-
-        [DllImport("ntdll.dll")]
-        static extern UInt32 NtSetSystemInformation(int InfoClass, IntPtr Info, int Length);
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SYSTEM_CACHE_INFORMATION
+        [DllImport("user32.dll", CharSet = CharSet.Auto)] extern static bool DestroyIcon(IntPtr handle);
+        [DllImport("psapi.dll")] static extern int EmptyWorkingSet([In] IntPtr obj0);
+        [DllImport("advapi32.dll", SetLastError = true)] internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
+        [DllImport("advapi32.dll", SetLastError = true)] internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
+        [DllImport("ntdll.dll")] static extern UInt32 NtSetSystemInformation(int InfoClass, IntPtr Info, int Length);
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] struct SYSTEM_CACHE_INFORMATION
         {
             public long CurrentSize;
             public long PeakSize;
@@ -68,8 +56,7 @@ namespace Compact_RAM_Cleaner
             public long Unused3;
             public long Unused4;
         }
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct TokPriv1Luid { public int Count; public long Luid; public int Attr; }
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] internal struct TokPriv1Luid { public int Count; public long Luid; public int Attr; }
         void ClearCache()
         {
             try
@@ -103,8 +90,7 @@ namespace Compact_RAM_Cleaner
                 tokPriv1Luid.Luid = 0L;
                 tokPriv1Luid.Attr = 2;
                 if (!LookupPrivilegeValue(null, privilegeName, ref tokPriv1Luid.Luid)) return false;
-                int num = AdjustTokenPrivileges(current.Token, false, ref tokPriv1Luid, 0, IntPtr.Zero, IntPtr.Zero) ? 1 : 0;
-                return num != 0;
+                return AdjustTokenPrivileges(current.Token, false, ref tokPriv1Luid, 0, IntPtr.Zero, IntPtr.Zero);
             }
         }
 
@@ -147,9 +133,9 @@ namespace Compact_RAM_Cleaner
 
         ulong num;
         ulong ram;
-        readonly string[] type = { "Б", "КБ", "МБ", "ГБ" };
         readonly bool silent;
         readonly bool is64Bit = Marshal.SizeOf(typeof(IntPtr)) == 8;
+        readonly string[] type = { "Б", "КБ", "МБ", "ГБ" };
         readonly string ini = $"{Path.GetDirectoryName(Application.ExecutablePath)}\\Compact RAM Cleaner.ini";
         string GetSize(double countBytes)
         {
