@@ -76,24 +76,24 @@ namespace Compact_RAM_Cleaner
             this.Menu3,
             this.Menu2});
             this.Context1.Name = "Context1";
-            this.Context1.Size = new System.Drawing.Size(184, 92);
+            this.Context1.Size = new System.Drawing.Size(190, 70);
             // 
             // Menu1
             // 
             this.Menu1.Name = "Menu1";
-            this.Menu1.Size = new System.Drawing.Size(183, 22);
-            this.Menu1.Text = "Очистка ОЗУ";
+            this.Menu1.Size = new System.Drawing.Size(189, 22);
+            this.Menu1.Text = "Очистить ОЗУ";
             // 
             // Menu3
             // 
             this.Menu3.Name = "Menu3";
-            this.Menu3.Size = new System.Drawing.Size(183, 22);
-            this.Menu3.Text = "Очистка ОЗУ + кэш";
+            this.Menu3.Size = new System.Drawing.Size(189, 22);
+            this.Menu3.Text = "Очистить ОЗУ + кэш";
             // 
             // Menu2
             // 
             this.Menu2.Name = "Menu2";
-            this.Menu2.Size = new System.Drawing.Size(183, 22);
+            this.Menu2.Size = new System.Drawing.Size(189, 22);
             this.Menu2.Text = "Выход";
             // 
             // Button1
@@ -367,6 +367,7 @@ namespace Compact_RAM_Cleaner
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Англ";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Context1.ResumeLayout(false);

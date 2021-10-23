@@ -93,18 +93,21 @@ namespace Compact_RAM_Cleaner
                 return AdjustTokenPrivileges(current.Token, false, ref tokPriv1Luid, 0, IntPtr.Zero, IntPtr.Zero);
             }
         }
+        ulong TotalRam() => new ComputerInfo().TotalPhysicalMemory;
+        ulong FreeRam() => new ComputerInfo().AvailablePhysicalMemory;
 
         public Form1()
         {
             InitializeComponent();
             Resize += (s, e) => { if (WindowState == FormWindowState.Minimized) Hide(); };
-            Button1.Click += (s, e) => Ram(false);
             NotifyIcon1.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) { Show(); WindowState = FormWindowState.Normal; } else if (e.Button == MouseButtons.Middle) Ram(false); };
+            Button1.Click += (s, e) => Ram(false);
             Menu1.Click += (s, e) => Ram(false);
             Menu2.Click += (s, e) => Exit();
             Menu3.Click += (s, e) => { Ram(false); if (!CacheCheck.Checked) ClearCache(); };
             ClosePanel.Click += (s, e) => Exit();
             Minimize.Click += (s, e) => WindowState = FormWindowState.Minimized;
+            async void Exit() { for (Opacity = 1; Opacity > .0; Opacity -= .1) await Task.Delay(10); Close(); }
             new List<Control> { TitlePanel, Label1, Label2, Label3, label4, label5, label6, LabelSettings, LabelMon, AppName }.ForEach(x =>
             {
                 x.MouseDown += (s, a) => { x.Capture = false; Capture = false; Message m = Message.Create(Handle, 0xA1, new IntPtr(2), IntPtr.Zero); base.WndProc(ref m); };
@@ -165,8 +168,7 @@ namespace Compact_RAM_Cleaner
             if (!silent)
             {
                 WindowState = FormWindowState.Normal;
-                for (Opacity = 0; Opacity < 1; Opacity += .1)
-                    await Task.Delay(5);
+                for (Opacity = 0; Opacity < 1; Opacity += .1) await Task.Delay(10);
             }
             else
             {
@@ -176,7 +178,7 @@ namespace Compact_RAM_Cleaner
                 Opacity = 1;
             }
         }
-        async void Exit()
+        void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             using (StreamWriter sw = File.CreateText(ini))
             {
@@ -188,9 +190,6 @@ namespace Compact_RAM_Cleaner
                 sw.WriteLine($"Startup={(checkBox3.Checked ? "true" : "false")}");
                 sw.WriteLine($"Language={(radioButton1.Checked ? "ru" : "en")}");
             }
-
-            for (Opacity = 1; Opacity > .0; Opacity -= .1) await Task.Delay(10);
-            Close();
         }
         void Lang()
         {
@@ -205,7 +204,7 @@ namespace Compact_RAM_Cleaner
                 label4.Text = "Usage:";
                 label5.Text = "Total memory:";
                 label6.Text = "Free memory:";
-                Button1.Text = "Clean";
+                Button1.Text = "Clear";
                 CacheCheck.Text = "+ Cached";
                 LabelSettings.Text = "Settings";
                 LabelSettings.Location = new Point(95, 140);
@@ -230,20 +229,19 @@ namespace Compact_RAM_Cleaner
                 label5.Text = "Всего памяти:";
                 label6.Text = "Свободной памяти:";
                 Button1.Text = "Очистить";
-                CacheCheck.Text = "+ кэш ОЗУ";
+                CacheCheck.Text = "+ кэш";
                 LabelSettings.Text = "Настройки";
                 LabelSettings.Location = new Point(85, 140);
                 checkBox1.Text = "Автоочистка при достижении (%)";
                 checkBox2.Text = "Запускать очистку при запуске";
                 checkBox3.Text = "Запускать при загрузке ОС";
                 checkBox4.Text = "Отключить уведомление";
-                Context1.Items[0].Text = "Очистка ОЗУ";
-                Context1.Items[1].Text = "Очистка ОЗУ + кэш";
+                Context1.Items[0].Text = "Очистить ОЗУ";
+                Context1.Items[1].Text = "Очистить ОЗУ + кэш";
                 Context1.Items[2].Text = "Выход";
                 Label2.Text = $"{GetSize(TotalRam())}";
             }
         }
-
         void Ram(bool auto)
         {
             if (!auto) ram = FreeRam();
@@ -286,7 +284,5 @@ namespace Compact_RAM_Cleaner
                 await Task.Delay(1000);
             }
         }
-        ulong TotalRam() => new ComputerInfo().TotalPhysicalMemory;
-        ulong FreeRam() => new ComputerInfo().AvailablePhysicalMemory;
     }
 }
