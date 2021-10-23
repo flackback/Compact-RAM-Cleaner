@@ -102,6 +102,7 @@ namespace Compact_RAM_Cleaner
             NotifyIcon1.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) { Show(); WindowState = FormWindowState.Normal; } else if (e.Button == MouseButtons.Middle) Ram(false); };
             Menu1.Click += (s, e) => Ram(false);
             Menu2.Click += (s, e) => Exit();
+            Menu3.Click += (s, e) => { Ram(false); if (!CacheCheck.Checked) ClearCache(); };
             ClosePanel.Click += (s, e) => Exit();
             Minimize.Click += (s, e) => WindowState = FormWindowState.Minimized;
             new List<Control> { TitlePanel, Label1, Label2, Label3, label4, label5, label6, LabelSettings, LabelMon, AppName }.ForEach(x =>
@@ -212,6 +213,9 @@ namespace Compact_RAM_Cleaner
                 checkBox2.Text = "Run cleanup on startup";
                 checkBox3.Text = "Start at OS boot";
                 checkBox4.Text = "Disable notification";
+                Context1.Items[0].Text = "Сlear RAM";
+                Context1.Items[1].Text = "Сlear RAM + Cached";
+                Context1.Items[2].Text = "Exit";
                 Label2.Text = $"{GetSize(TotalRam())}";
             }
             else
@@ -233,6 +237,9 @@ namespace Compact_RAM_Cleaner
                 checkBox2.Text = "Запускать очистку при запуске";
                 checkBox3.Text = "Запускать при загрузке ОС";
                 checkBox4.Text = "Отключить уведомление";
+                Context1.Items[0].Text = "Очистка ОЗУ";
+                Context1.Items[1].Text = "Очистка ОЗУ + кэш";
+                Context1.Items[2].Text = "Выход";
                 Label2.Text = $"{GetSize(TotalRam())}";
             }
         }

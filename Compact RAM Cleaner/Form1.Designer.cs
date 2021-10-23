@@ -34,6 +34,7 @@ namespace Compact_RAM_Cleaner
             this.NotifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.Context1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Menu1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.Menu3 = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu2 = new System.Windows.Forms.ToolStripMenuItem();
             this.Button1 = new System.Windows.Forms.Button();
             this.CacheCheck = new System.Windows.Forms.CheckBox();
@@ -72,20 +73,27 @@ namespace Compact_RAM_Cleaner
             // 
             this.Context1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Menu1,
+            this.Menu3,
             this.Menu2});
             this.Context1.Name = "Context1";
-            this.Context1.Size = new System.Drawing.Size(147, 48);
+            this.Context1.Size = new System.Drawing.Size(184, 92);
             // 
             // Menu1
             // 
             this.Menu1.Name = "Menu1";
-            this.Menu1.Size = new System.Drawing.Size(146, 22);
+            this.Menu1.Size = new System.Drawing.Size(183, 22);
             this.Menu1.Text = "Очистка ОЗУ";
+            // 
+            // Menu3
+            // 
+            this.Menu3.Name = "Menu3";
+            this.Menu3.Size = new System.Drawing.Size(183, 22);
+            this.Menu3.Text = "Очистка ОЗУ + кэш";
             // 
             // Menu2
             // 
             this.Menu2.Name = "Menu2";
-            this.Menu2.Size = new System.Drawing.Size(146, 22);
+            this.Menu2.Size = new System.Drawing.Size(183, 22);
             this.Menu2.Text = "Выход";
             // 
             // Button1
@@ -106,9 +114,9 @@ namespace Compact_RAM_Cleaner
             this.CacheCheck.AutoSize = true;
             this.CacheCheck.Location = new System.Drawing.Point(154, 113);
             this.CacheCheck.Name = "CacheCheck";
-            this.CacheCheck.Size = new System.Drawing.Size(81, 17);
+            this.CacheCheck.Size = new System.Drawing.Size(55, 17);
             this.CacheCheck.TabIndex = 26;
-            this.CacheCheck.Text = "+ кэш ОЗУ";
+            this.CacheCheck.Text = "+ кэш";
             this.CacheCheck.UseVisualStyleBackColor = true;
             // 
             // TitlePanel
@@ -397,6 +405,7 @@ namespace Compact_RAM_Cleaner
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.ToolStripMenuItem Menu3;
     }
 }
 
