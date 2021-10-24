@@ -163,12 +163,6 @@ namespace Compact_RAM_Cleaner
                             sw.WriteLine("StartupCleaner=true");
                     }
                 }
-
-
-
-
-
-
             };
             checkBox3.CheckedChanged += (s, e) =>
             {
@@ -266,7 +260,6 @@ namespace Compact_RAM_Cleaner
             Tray();
             Label2.Text = $"{GetSize(TotalRam())}";
             foreach (var arg in Environment.GetCommandLineArgs()) silent = arg.EndsWith("silent");
-
         }
 
         ulong num;
