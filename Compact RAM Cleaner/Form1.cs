@@ -44,7 +44,8 @@ namespace Compact_RAM_Cleaner
         [DllImport("advapi32.dll", SetLastError = true)] internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
         [DllImport("advapi32.dll", SetLastError = true)] internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
         [DllImport("ntdll.dll")] static extern UInt32 NtSetSystemInformation(int InfoClass, IntPtr Info, int Length);
-        [StructLayout(LayoutKind.Sequential, Pack = 1)] struct SYSTEM_CACHE_INFORMATION
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct SYSTEM_CACHE_INFORMATION
         {
             public long CurrentSize;
             public long PeakSize;
@@ -107,32 +108,165 @@ namespace Compact_RAM_Cleaner
             Menu3.Click += (s, e) => { Ram(false); if (!CacheCheck.Checked) ClearCache(); };
             ClosePanel.Click += (s, e) => Exit();
             Minimize.Click += (s, e) => WindowState = FormWindowState.Minimized;
-            async void Exit() { for (Opacity = 1; Opacity > .0; Opacity -= .1) await Task.Delay(10); Close(); }
-            new List<Control> { TitlePanel, Label1, Label2, Label3, label4, label5, label6, LabelSettings, LabelMon, AppName }.ForEach(x =>
-            {
-                x.MouseDown += (s, a) => { x.Capture = false; Capture = false; Message m = Message.Create(Handle, 0xA1, new IntPtr(2), IntPtr.Zero); base.WndProc(ref m); };
-            });
             checkBox1.CheckedChanged += (s, e) =>
             {
-                if (checkBox1.Checked)
+                if (File.Exists(ini))
                 {
-                    AutoCleaner();
-                    Numeric1.Enabled = false;
+                    List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("AutoCleaner=") && !x.Contains("AutoCleanerValue=")).ToList();
+                    if (checkBox1.Checked)
+                    {
+                        AutoCleaner();
+                        Numeric1.Enabled = false;
+                        list.Add("AutoCleaner=true");
+                        list.Add($"AutoCleanerValue={Numeric1.Value}");
+                    }
+                    else
+                    {
+                        Numeric1.Enabled = true;
+                        list = list.Where(x => !x.Contains("AutoCleaner=") && !x.Contains("AutoCleanerValue=")).ToList();
+                    }
+                    using (StreamWriter sw = File.CreateText(ini))
+                        list.ForEach(x => sw.WriteLine(x));
                 }
-                else Numeric1.Enabled = true;
+                else
+                {
+                    if (checkBox1.Checked)
+                    {
+                        AutoCleaner();
+                        Numeric1.Enabled = false;
+                        using (StreamWriter sw = File.CreateText(ini))
+                        {
+                            sw.WriteLine($"AutoCleaner=true");
+                            sw.WriteLine($"AutoCleanerValue={Numeric1.Value}");
+                        }
+                    }
+                    else Numeric1.Enabled = true;
+                }
+            };
+            checkBox2.CheckedChanged += (s, e) =>
+            {
+                if (File.Exists(ini))
+                {
+                    List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("StartupCleaner=")).ToList();
+                    if (checkBox2.Checked)
+                        list.Add("StartupCleaner=true");
+                    else
+                        list = list.Where(x => !x.Contains("StartupCleaner=")).ToList();
+                    using (StreamWriter sw = File.CreateText(ini))
+                        list.ForEach(x => sw.WriteLine(x));
+                }
+                else
+                {
+                    if (checkBox2.Checked)
+                    {
+                        using (StreamWriter sw = File.CreateText(ini))
+                            sw.WriteLine("StartupCleaner=true");
+                    }
+                }
+
+
+
+
+
+
             };
             checkBox3.CheckedChanged += (s, e) =>
             {
                 using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"))
                 {
-                    if (checkBox3.Checked) key.SetValue("Compact RAM Cleaner", $"\"{Path.GetDirectoryName(Application.ExecutablePath)}\\Compact RAM Cleaner.exe\" silent");
-                    else try { key.DeleteValue("Compact RAM Cleaner"); } catch { };
+                    if (File.Exists(ini))
+                    {
+                        List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("Startup=")).ToList();
+                        if (checkBox3.Checked)
+                        {
+                            key.SetValue("Compact RAM Cleaner", $"\"{Path.GetDirectoryName(Application.ExecutablePath)}\\Compact RAM Cleaner.exe\" silent");
+                            list.Add("Startup=true");
+                        }
+                        else
+                        {
+                            try { key.DeleteValue("Compact RAM Cleaner"); } catch { };
+                            list = list.Where(x => !x.Contains("Startup=")).ToList();
+                        }
+                        using (StreamWriter sw = File.CreateText(ini))
+                            list.ForEach(x => sw.WriteLine(x));
+                    }
+                    else
+                    {
+                        if (checkBox3.Checked)
+                        {
+                            using (StreamWriter sw = File.CreateText(ini))
+                                sw.WriteLine("Startup=true");
+                        }
+                    }
                 }
             };
-            radioButton1.CheckedChanged += (s, e) => Lang();
+            checkBox4.CheckedChanged += (s, e) =>
+            {
+                if (File.Exists(ini))
+                {
+                    List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("Startup=")).ToList();
+                    if (checkBox4.Checked)
+                        list.Add("NotifyDisable=true");
+                    else
+                        list = list.Where(x => !x.Contains("NotifyDisable=")).ToList();
+                    using (StreamWriter sw = File.CreateText(ini))
+                        list.ForEach(x => sw.WriteLine(x));
+                }
+                else
+                {
+                    if (checkBox4.Checked)
+                    {
+                        using (StreamWriter sw = File.CreateText(ini))
+                            sw.WriteLine("NotifyDisable=true");
+                    }
+                }
+            };
+            CacheCheck.CheckedChanged += (s, e) =>
+            {
+                if (File.Exists(ini))
+                {
+                    List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("ClearCache=")).ToList();
+                    if (CacheCheck.Checked)
+                        list.Add("ClearCache=true");
+                    else
+                        list = list.Where(x => !x.Contains("ClearCache=")).ToList();
+                    using (StreamWriter sw = File.CreateText(ini))
+                        list.ForEach(x => sw.WriteLine(x));
+                }
+                else
+                {
+                    if (CacheCheck.Checked)
+                    {
+                        using (StreamWriter sw = File.CreateText(ini))
+                            sw.WriteLine("ClearCache=true");
+                    }
+                }
+            };
+            radioButton2.CheckedChanged += (s, e) =>
+            {
+                Lang();
+                if (File.Exists(ini))
+                {
+                    List<string> list = File.ReadAllLines(ini).ToList().Where(x => !x.Contains("Language=")).ToList();
+                    list.Add($"Language={(radioButton2.Checked ? "en" : "ru")}");
+                    using (StreamWriter sw = File.CreateText(ini))
+                        list.ForEach(x => sw.WriteLine(x));
+                }
+                else
+                {
+                    using (StreamWriter sw = File.CreateText(ini))
+                        sw.WriteLine($"Language={(radioButton2.Checked ? "en" : "ru")}");
+                }
+            };
+            async void Exit() { for (Opacity = 1; Opacity > .0; Opacity -= .1) await Task.Delay(10); Close(); }
+            new List<Control> { TitlePanel, Label1, Label2, Label3, label4, label5, label6, LabelSettings, LabelMon, AppName }.ForEach(x =>
+            {
+                x.MouseDown += (s, a) => { x.Capture = false; Capture = false; Message m = Message.Create(Handle, 0xA1, new IntPtr(2), IntPtr.Zero); base.WndProc(ref m); };
+            });
             Tray();
             Label2.Text = $"{GetSize(TotalRam())}";
             foreach (var arg in Environment.GetCommandLineArgs()) silent = arg.EndsWith("silent");
+
         }
 
         ulong num;
@@ -154,13 +288,13 @@ namespace Compact_RAM_Cleaner
             {
                 File.ReadAllLines(ini).ToList().ForEach(x =>
                 {
-                    if (x.Contains("NotifyDisable=true")) checkBox4.Checked = true;
-                    else if (x.Contains("ClearCache=true")) CacheCheck.Checked = true;
+                    if (x.Contains("Language=en")) radioButton2.Checked = true;
                     else if (x.Contains("AutoCleaner=true")) checkBox1.Checked = true;
                     else if (x.Contains("AutoCleanerValue=")) Numeric1.Value = Convert.ToDecimal(x.Remove(0, 17)) <= 95 ? Convert.ToDecimal(x.Remove(0, 17)) : 80;
+                    else if (x.Contains("ClearCache=true")) CacheCheck.Checked = true;
                     else if (x.Contains("StartupCleaner=true")) { checkBox2.Checked = true; Ram(false); }
                     else if (x.Contains("Startup=true")) checkBox3.Checked = true;
-                    else if (x.Contains("Language=en")) radioButton2.Checked = true;
+                    else if (x.Contains("NotifyDisable=true")) checkBox4.Checked = true;
                 });
             }
             else { if (!CultureInfo.CurrentUICulture.ToString().Contains("ru-RU")) radioButton2.Checked = true; }
@@ -178,19 +312,7 @@ namespace Compact_RAM_Cleaner
                 Opacity = 1;
             }
         }
-        void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            using (StreamWriter sw = File.CreateText(ini))
-            {
-                sw.WriteLine($"NotifyDisable={(checkBox4.Checked ? "true" : "false")}");
-                sw.WriteLine($"ClearCache={(CacheCheck.Checked ? "true" : "false")}");
-                sw.WriteLine($"AutoCleaner={(checkBox1.Checked ? "true" : "false")}");
-                sw.WriteLine($"AutoCleanerValue={Numeric1.Value}");
-                sw.WriteLine($"StartupCleaner={(checkBox2.Checked ? "true" : "false")}");
-                sw.WriteLine($"Startup={(checkBox3.Checked ? "true" : "false")}");
-                sw.WriteLine($"Language={(radioButton1.Checked ? "ru" : "en")}");
-            }
-        }
+        readonly Font f = new Font("Tahoma", 8F);
         void Lang()
         {
             if (radioButton2.Checked)
@@ -276,8 +398,8 @@ namespace Compact_RAM_Cleaner
                     }
                 }, 0, 15 - 15 * (int)num / 100, 15, 15);
                 g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
-                g.DrawString(num.ToString(), new Font("Tahoma", 8F), new SolidBrush(Color.Black), 0, 2);
-                g.DrawString(num.ToString(), new Font("Tahoma", 8F), new SolidBrush(Color.White), 0, 1);
+                g.DrawString(num.ToString(), f, new SolidBrush(Color.Black), 0, 2);
+                g.DrawString(num.ToString(), f, new SolidBrush(Color.White), 0, 1);
                 Icon i = Icon.FromHandle(b.GetHicon());
                 NotifyIcon1.Icon = i;
                 DestroyIcon(i.Handle);

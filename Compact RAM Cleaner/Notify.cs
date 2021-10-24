@@ -16,16 +16,14 @@ namespace Compact_RAM_Cleaner
 
         async void Notify_Load(object sender, EventArgs e)
         {
-            for (Opacity = 0; Opacity < 1; Opacity += 0.1)
-                await Task.Delay(10);
+            for (Opacity = 0; Opacity < 1; Opacity += .1) await Task.Delay(10);
             await Task.Delay(4000);
-            Close();
+            for (Opacity = 1; Opacity > .0; Opacity -= .2) await Task.Delay(10); Close();
         }
 
         void Notify_Paint(object sender, PaintEventArgs e)
         {
-            Pen pen = new Pen(Color.FromArgb(48, 49, 54), 2);
-            e.Graphics.DrawLine(pen, 0, Height, Width, Height);
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(48, 49, 54), 2), 0, Height, Width, Height);
         }
     }
 }

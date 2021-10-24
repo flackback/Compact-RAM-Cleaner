@@ -107,6 +107,7 @@ namespace Compact_RAM_Cleaner
             this.Button1.Size = new System.Drawing.Size(134, 20);
             this.Button1.TabIndex = 14;
             this.Button1.Text = "Очистить";
+            this.Button1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.Button1.UseVisualStyleBackColor = false;
             // 
             // CacheCheck
@@ -367,7 +368,6 @@ namespace Compact_RAM_Cleaner
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Англ";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Context1.ResumeLayout(false);
